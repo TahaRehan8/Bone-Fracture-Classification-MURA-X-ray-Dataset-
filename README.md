@@ -286,6 +286,20 @@ This project is architected specifically for lightweight cloud deployment on pla
 
 ---
 
+## Development Challenges & Solutions
+
+Building a production-ready application requires overcoming several engineering hurdles. Here are the key errors encountered and how they were resolved:
+
+| Error / Challenge | Root Cause | Solution Implemented |
+|-------------------|------------|----------------------|
+| **Gradio Image Loading 404s** | Gradio 4.x has complex internal routing logic that often breaks relative file paths and `file=` URLs when serving static galleries. | **Complete Architecture Pivot:** Removed the Gradio dependency entirely. Built a custom Vanilla HTML/JS frontend served natively via FastAPI `StaticFiles`, ensuring 100% reliable image loading. |
+| **Render OOM (Out of Memory) Crashes** | Cloud platforms like Render offer 512MB RAM on free tiers. Heavy libraries like Gradio and full TensorFlow often exhaust this memory during startup. | **Dependency Pruning:** Removing Gradio drastically reduced RAM usage. The new custom frontend runs strictly on the client browser, leaving server RAM exclusively for FastAPI and Model Inference. |
+| **Render "Model Not Loaded" Error** | Standard `.gitignore` templates block `*.keras` files to prevent exceeding GitHub's 100MB limit, preventing the cloud from seeing the models. | **Selective Tracking:** Verified that `MobileNetV3` is highly efficient (only 7.3MB) and explicitly removed the `.keras` block from `.gitignore`, allowing seamless deployment. |
+| **Sample Images Missing on Cloud** | Hardcoded UI image lists break if the user uploads new sample images to the cloud container but forgets to update the frontend code. | **Dynamic API Endpoint:** Created a `/api/samples` REST endpoint that dynamically scans the container's hard drive at runtime and auto-populates the UI gallery. |
+| **TensorFlow Gradient Shock** | Fine-tuning a pre-trained network with an uninitialized classification head destroys the valuable pre-trained weights via massive backpropagated errors. | **Two-Phase Fine-Tuning:** Phase 1 freezes the base and trains only the head. Phase 2 unfreezes the deepest layers using a 10× smaller learning rate. |
+
+---
+
 ## Future Work
 
 - **Larger Backbone:** Swap MobileNetV3 for EfficientNet-B3 or ConvNeXt-Tiny for higher capacity
