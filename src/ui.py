@@ -142,6 +142,18 @@ def create_ui(models_dict: dict) -> gr.Blocks:
         margin-bottom: 10px !important;
         font-weight: 600 !important;
     }
+    
+    .prototype-warning {
+        background-color: #fffbeb;
+        color: #92400e;
+        border: 1px solid #fcd34d;
+        border-radius: 4px;
+        padding: 12px 15px;
+        font-size: 13px;
+        font-weight: 500;
+        text-align: center;
+        margin-top: 20px;
+    }
     """
 
     model_choices = [entry['name'] for key, entry in MODEL_REGISTRY.items()]
@@ -150,6 +162,7 @@ def create_ui(models_dict: dict) -> gr.Blocks:
         with gr.Column(elem_classes="header-container"):
             gr.Markdown("<h1>Bone Fracture Detection System</h1>")
             gr.Markdown('<div class="subtitle">Clinical Decision Support Tool - MURA Dataset Trained Models</div>')
+            gr.Markdown('<div class="prototype-warning"><strong>PROTOTYPE / RESEARCH USE ONLY:</strong> This system is a prototype and is not intended for clinical diagnostics. All predictions must be verified by a qualified medical professional.</div>')
 
         with gr.Row():
             # Left Column (Input)
