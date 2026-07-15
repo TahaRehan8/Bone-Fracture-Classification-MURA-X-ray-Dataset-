@@ -136,17 +136,7 @@ def load_model(
             f"Train the model first or download the weights."
         )
 
-    class SafeDense(layers.Dense):
-        """Wrapper to ignore Keras 3-specific arguments when loading in Keras 2 environments."""
-        def __init__(self, **kwargs):
-            kwargs.pop('quantization_config', None)
-            super().__init__(**kwargs)
-
-    model = keras.models.load_model(
-        str(weights_file),
-        custom_objects={"Dense": SafeDense},
-        compile=False
-    )
+    model = keras.models.load_model(str(weights_file))
 
     logger.info(
         "Loaded '%s' from '%s'",
