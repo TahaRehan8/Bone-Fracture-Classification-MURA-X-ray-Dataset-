@@ -14,6 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ src/
 COPY Models/ Models/
 COPY samples/ samples/
+COPY static/ static/
 
 RUN mkdir -p logs
 
