@@ -297,6 +297,7 @@ Building a production-ready application requires overcoming several engineering 
 | **Render "Model Not Loaded" Error** | Standard `.gitignore` templates block `*.keras` files to prevent exceeding GitHub's 100MB limit, preventing the cloud from seeing the models. | **Selective Tracking:** Verified that `MobileNetV3` is highly efficient (only 7.3MB) and explicitly removed the `.keras` block from `.gitignore`, allowing seamless deployment. |
 | **Sample Images Missing on Cloud** | Hardcoded UI image lists break if the user uploads new sample images to the cloud container but forgets to update the frontend code. | **Dynamic API Endpoint:** Created a `/api/samples` REST endpoint that dynamically scans the container's hard drive at runtime and auto-populates the UI gallery. |
 | **TensorFlow Gradient Shock** | Fine-tuning a pre-trained network with an uninitialized classification head destroys the valuable pre-trained weights via massive backpropagated errors. | **Two-Phase Fine-Tuning:** Phase 1 freezes the base and trains only the head. Phase 2 unfreezes the deepest layers using a 10× smaller learning rate. |
+| **Keras Deserialization Crash (`quantization_config`)** | Models trained in Kaggle (Keras 3) crash when loaded in older deployment environments (Keras 2) due to an unrecognized `quantization_config` parameter. | **Binary Patch & Version Pinning:** Wrote a Python script to directly edit the `.keras` ZIP binary and strip the incompatible JSON configuration, while also strictly pinning `tensorflow==2.16.1` to force Keras 3 compatibility. |
 
 ---
 
