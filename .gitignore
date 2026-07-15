@@ -8,8 +8,7 @@ venv/
 .venv/
 env/
 
-# Model weights (large files — download separately or use Git LFS)
-Models/*.keras
+# Model weights (Large files > 100MB should use Git LFS)
 Models/*.h5
 Models/*.pth
 
