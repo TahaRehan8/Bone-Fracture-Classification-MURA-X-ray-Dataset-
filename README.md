@@ -20,7 +20,9 @@ A modular, production-ready bone fracture classification system built with **Ten
 │   ├── model.py             # Architecture definitions & weight loading
 │   ├── inference.py         # Preprocessing, prediction, CLI entry point
 │   ├── monitoring.py        # Prediction logging and drift detection
-│   └── api.py               # FastAPI application (multi-model)
+│   └── api.py               # FastAPI application (multi-model + static UI)
+├── static/
+│   └── index.html           # Custom native HTML/JS clinical dashboard
 ├── logs/
 │   └── predictions.log      # Created at runtime (not committed)
 ├── test_api.py              # Automated API test suite
@@ -216,6 +218,8 @@ uvicorn src.api:app --host 0.0.0.0 --port 8000
 | `GET` | `/model-info?model=mobilenetv3` | Model details & parameter count |
 | `POST` | `/predict?model=mobilenetv3` | Upload X-ray → fracture prediction |
 | `GET` | `/stats` | Prediction statistics & drift analysis |
+| `GET` | `/api/samples` | Dynamically lists all images in the `samples/` directory |
+| `GET` | `/` or `/ui` | Serves the custom static HTML dashboard |
 
 **Example (MobileNetV3):**
 
@@ -268,6 +272,7 @@ pytest test_api.py -v
 | MURA flattening pipeline | Converts deeply nested clinical hierarchy into standard image classification format |
 | Patient-level splitting | Prevents data leakage — no patient's images appear in multiple splits |
 | FastAPI with multi-model support | Select model at inference time via query param; auto-generated OpenAPI docs |
+| Custom HTML/JS Frontend | Replaced Gradio with a native static frontend. Eliminates huge dependencies, prevents URL routing bugs, and slashes memory usage for Render deployment. |
 | JSON-line monitoring | No external deps (no MLflow/Prometheus), easy to parse, drift detection built-in |
 | Optimal threshold tuning | Medical context demands high recall; threshold optimization maximizes F1 |
 
