@@ -168,6 +168,15 @@ async def predict_endpoint(
 async def prediction_stats():
     return get_prediction_stats()
 
+@app.get("/api/samples")
+async def list_samples():
+    """Returns a list of all sample image filenames."""
+    samples_dir = Path("samples")
+    if not samples_dir.exists():
+        return {"samples": []}
+    files = [f.name for f in samples_dir.iterdir() if f.is_file() and f.suffix.lower() in ALLOWED_EXTENSIONS]
+    return {"samples": sorted(files)}
+
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 

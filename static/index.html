@@ -328,32 +328,46 @@
         
         let selectedFile = null;
 
-        // Populate gallery with known samples
-        const sampleImages = ['sample_1.jpg', 'sample_2.jpeg', 'sample_3.jpeg', 'sample_4.jpeg', 'sample_5.jpeg'];
-        
-        sampleImages.forEach(filename => {
-            const imgUrl = `/samples/${filename}`;
-            const imgEl = document.createElement('img');
-            imgEl.src = imgUrl;
-            imgEl.className = 'gallery-item';
-            imgEl.title = filename;
-            
-            imgEl.addEventListener('click', async () => {
-                // Fetch the image as a Blob so we can upload it later
-                try {
-                    const response = await fetch(imgUrl);
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const blob = await response.blob();
-                    selectedFile = new File([blob], filename, { type: blob.type });
-                    showImage(imgUrl);
-                } catch (error) {
-                    console.error('Error loading sample image:', error);
-                    alert("Error loading sample image.");
+        // Dynamically fetch available samples from the API
+        async function loadSamples() {
+            try {
+                const response = await fetch('/api/samples');
+                const data = await response.json();
+                
+                if (data.samples.length === 0) {
+                    galleryGrid.innerHTML = '<span style="color:#64748b; font-size:14px;">No reference examples found in the designated samples directory.</span>';
+                    return;
                 }
-            });
-            
-            galleryGrid.appendChild(imgEl);
-        });
+
+                data.samples.forEach(filename => {
+                    const imgUrl = `/samples/${filename}`;
+                    const imgEl = document.createElement('img');
+                    imgEl.src = imgUrl;
+                    imgEl.className = 'gallery-item';
+                    imgEl.title = filename;
+                    
+                    imgEl.addEventListener('click', async () => {
+                        try {
+                            const response = await fetch(imgUrl);
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            const blob = await response.blob();
+                            selectedFile = new File([blob], filename, { type: blob.type });
+                            showImage(imgUrl);
+                        } catch (error) {
+                            console.error('Error loading sample image:', error);
+                            alert("Error loading sample image.");
+                        }
+                    });
+                    
+                    galleryGrid.appendChild(imgEl);
+                });
+            } catch (error) {
+                console.error('Error fetching sample list:', error);
+                galleryGrid.innerHTML = '<span style="color:#ef4444; font-size:14px;">Error loading sample images.</span>';
+            }
+        }
+        
+        loadSamples();
 
         // Click to upload
         dropZone.addEventListener('click', () => fileInput.click());
