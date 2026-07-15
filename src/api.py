@@ -168,9 +168,17 @@ async def predict_endpoint(
 async def prediction_stats():
     return get_prediction_stats()
 
-# Mount Gradio UI
-import gradio as gr
-from src.ui import create_ui
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
-demo = create_ui(_models)
-app = gr.mount_gradio_app(app, demo, path="/ui")
+# Mount directories for static UI files and samples
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/samples", StaticFiles(directory="samples"), name="samples")
+
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/static/index.html")
+
+@app.get("/ui")
+async def ui_redirect():
+    return RedirectResponse(url="/static/index.html")
