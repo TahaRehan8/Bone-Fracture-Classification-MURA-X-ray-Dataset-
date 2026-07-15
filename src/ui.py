@@ -1,6 +1,6 @@
 """
 Gradio UI for Bone Fracture Classification.
-Premium Glassmorphism Interface.
+Professional Medical Enterprise Interface.
 """
 from pathlib import Path
 import gradio as gr
@@ -13,13 +13,13 @@ def create_ui(models_dict: dict) -> gr.Blocks:
     """Builds the Gradio UI using the provided loaded models."""
     
     def classify_xray(image, model_choice):
-        empty_html = '<div class="verdict-box verdict-empty">Awaiting Scan...</div>'
+        empty_html = '<div class="verdict-box verdict-empty">Awaiting Radiograph...</div>'
         if image is None:
             return {}, empty_html
 
         model_key = "cnn" if "CNN" in model_choice else "mobilenetv3"
         if model_key not in models_dict:
-            return {}, f'<div class="verdict-box verdict-fractured">❌ Model Not Loaded</div>'
+            return {}, f'<div class="verdict-box verdict-error">System Error: Model Not Loaded</div>'
         
         try:
             result = predict(models_dict[model_key], image, model_name=model_key)
@@ -28,175 +28,163 @@ def create_ui(models_dict: dict) -> gr.Blocks:
             label = result["prediction"]
             
             if label == "fractured":
-                html = f'<div class="verdict-box verdict-fractured">🦴 FRACTURED<br><span style="font-size:0.7em;font-weight:500;opacity:0.8;">Diagnostic Confidence: {confidence:.1%}</span></div>'
+                html = f'<div class="verdict-box verdict-fractured">FRACTURE DETECTED<br><span class="verdict-subtext">Confidence Score: {confidence:.1%}</span></div>'
             else:
-                html = f'<div class="verdict-box verdict-normal">✅ NORMAL BONE<br><span style="font-size:0.7em;font-weight:500;opacity:0.8;">Diagnostic Confidence: {confidence:.1%}</span></div>'
+                html = f'<div class="verdict-box verdict-normal">NO FRACTURE DETECTED<br><span class="verdict-subtext">Confidence Score: {confidence:.1%}</span></div>'
             return probs, html
         except Exception as e:
-            return {}, f'<div class="verdict-box verdict-fractured">❌ Error: {str(e)}</div>'
+            return {}, f'<div class="verdict-box verdict-error">Processing Error: {str(e)}</div>'
 
     SAMPLES_DIR = Path(__file__).resolve().parent.parent / "samples"
     sample_images = sorted(SAMPLES_DIR.glob("*.png")) + sorted(SAMPLES_DIR.glob("*.jpg")) + sorted(SAMPLES_DIR.glob("*.jpeg"))
     sample_paths = [str(p) for p in sample_images[:10]]
 
     CUSTOM_CSS = """
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
-    
-    body { font-family: 'Inter', sans-serif !important; background-color: #f8fafc !important; }
+    body { background-color: #f4f7f6 !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; }
     
     .gradio-container { 
-        max-width: 1050px !important; 
-        margin: 40px auto !important; 
-        background: rgba(255, 255, 255, 0.6) !important; 
-        backdrop-filter: blur(25px) !important; 
-        -webkit-backdrop-filter: blur(25px) !important;
-        border-radius: 24px !important; 
-        border: 1px solid rgba(255, 255, 255, 0.8) !important; 
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08) !important; 
-        padding: 40px !important; 
+        max-width: 1100px !important; 
+        margin: 30px auto !important; 
+        background: #ffffff !important; 
+        border-radius: 8px !important; 
+        border: 1px solid #e2e8f0 !important; 
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important; 
+        padding: 30px !important; 
+    }
+    
+    .header-container {
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
     }
     
     h1 {
-        text-align: center;
-        background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 3.2em !important;
-        font-weight: 800 !important;
-        margin-bottom: 5px !important;
-        letter-spacing: -0.03em;
+        color: #1e293b !important;
+        font-size: 24px !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
+        letter-spacing: 0.5px;
     }
     
     .subtitle { 
-        text-align: center; color: #64748b; font-size: 1.15em; font-weight: 500; margin-bottom: 35px; 
+        color: #64748b; 
+        font-size: 14px; 
+        margin-top: 4px; 
     }
     
-    .card-panel {
-        background: #ffffff !important;
-        border-radius: 16px !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.04) !important;
-        padding: 25px !important;
-        border: 1px solid #f1f5f9 !important;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card-panel:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
+    .panel {
+        background: #f8fafc !important;
+        border-radius: 6px !important;
+        padding: 20px !important;
+        border: 1px solid #e2e8f0 !important;
     }
     
     button.primary {
-        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        background-color: #0f172a !important;
+        color: #ffffff !important;
         border: none !important;
-        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3) !important;
-        transition: all 0.3s ease !important;
-        font-weight: 600 !important;
-        font-size: 1.1em !important;
-        border-radius: 12px !important;
-        padding: 12px !important;
+        border-radius: 4px !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        padding: 10px 16px !important;
+        transition: background-color 0.2s ease !important;
     }
     button.primary:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 12px 25px rgba(79, 70, 229, 0.45) !important;
+        background-color: #334155 !important;
     }
     
     .verdict-box {
-        padding: 25px;
-        border-radius: 16px;
+        padding: 15px;
+        border-radius: 4px;
         text-align: center;
-        font-size: 1.8em;
-        font-weight: 800;
+        font-size: 18px;
+        font-weight: 600;
         margin-top: 10px;
-        transition: all 0.4s ease;
-        letter-spacing: -0.02em;
+        border-width: 1px;
+        border-style: solid;
     }
     .verdict-fractured {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
-        color: #dc2626;
-        border: 2px solid rgba(239, 68, 68, 0.4);
-        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.15);
+        background-color: #fef2f2;
+        color: #991b1b;
+        border-color: #f87171;
     }
     .verdict-normal {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05));
-        color: #16a34a;
-        border: 2px solid rgba(34, 197, 94, 0.4);
-        box-shadow: 0 10px 25px rgba(34, 197, 94, 0.15);
+        background-color: #f0fdf4;
+        color: #166534;
+        border-color: #4ade80;
     }
     .verdict-empty {
-        background: #f8fafc;
-        color: #94a3b8;
-        border: 2px dashed #cbd5e1;
-        font-size: 1.2em;
-        padding: 40px 20px;
+        background-color: #f1f5f9;
+        color: #64748b;
+        border-color: #cbd5e1;
+    }
+    .verdict-error {
+        background-color: #fffbeb;
+        color: #92400e;
+        border-color: #fbbf24;
+    }
+    .verdict-subtext {
+        font-size: 12px;
+        font-weight: 400;
+        color: inherit;
+        opacity: 0.8;
     }
     
-    /* Make the gallery container look like a medical film strip */
     .gallery-container {
-        margin-top: 40px !important;
-        padding: 30px !important;
-        background: #1e293b !important;
-        border-radius: 20px !important;
-        border: 4px solid #0f172a !important;
-        box-shadow: inset 0 4px 20px rgba(0,0,0,0.5) !important;
+        margin-top: 30px !important;
+        padding: 20px !important;
+        background: #ffffff !important;
+        border-top: 1px solid #e2e8f0 !important;
     }
     .gallery-container h3 {
-        color: #e2e8f0 !important;
+        color: #334155 !important;
+        font-size: 16px !important;
+        margin-bottom: 10px !important;
         font-weight: 600 !important;
-        margin-top: 0 !important;
     }
     """
 
     model_choices = [entry['name'] for key, entry in MODEL_REGISTRY.items()]
 
-    # We use a custom theme configuration for softer inputs
-    theme = gr.themes.Default(
-        font=[gr.themes.GoogleFont("Inter"), "sans-serif"],
-        primary_hue="indigo",
-        secondary_hue="pink",
-        neutral_hue="slate",
-    ).set(
-        block_background_fill="transparent",
-        block_border_width="0px",
-    )
-
-    with gr.Blocks(css=CUSTOM_CSS, title="AI Radiologist | Bone Fracture", theme=theme) as demo:
-        gr.Markdown("<h1>🦴 AI Radiologist</h1>")
-        gr.Markdown('<p class="subtitle">State-of-the-art Deep Learning analysis for real-time Bone Fracture detection.</p>')
+    with gr.Blocks(css=CUSTOM_CSS, title="Bone Fracture Detection System") as demo:
+        with gr.Column(elem_classes="header-container"):
+            gr.Markdown("<h1>Bone Fracture Detection System</h1>")
+            gr.Markdown('<div class="subtitle">Clinical Decision Support Tool - MURA Dataset Trained Models</div>')
 
         with gr.Row():
             # Left Column (Input)
-            with gr.Column(scale=1, elem_classes="card-panel"):
-                image_input = gr.Image(type="pil", label="Upload X-Ray Image", height=380)
+            with gr.Column(scale=1, elem_classes="panel"):
+                image_input = gr.Image(type="pil", label="Radiograph Input", height=350)
                 
                 with gr.Row():
                     model_dropdown = gr.Dropdown(
                         choices=model_choices,
                         value=model_choices[-1] if model_choices else None,
-                        label="Select Neural Network Architecture",
+                        label="Architecture Selection",
                         container=False
                     )
                 
-                predict_btn = gr.Button("🔍 Run AI Diagnostics", variant="primary", size="lg")
+                predict_btn = gr.Button("Analyze Radiograph", variant="primary")
 
             # Right Column (Output)
-            with gr.Column(scale=1, elem_classes="card-panel"):
-                verdict_output = gr.HTML(value='<div class="verdict-box verdict-empty">Awaiting Scan...</div>')
+            with gr.Column(scale=1, elem_classes="panel"):
+                verdict_output = gr.HTML(value='<div class="verdict-box verdict-empty">Awaiting Radiograph...</div>')
                 
-                gr.Markdown("<br>**Neural Network Confidence Distribution**")
+                gr.Markdown("<br>**Model Confidence Distribution**")
                 label_output = gr.Label(label="", num_top_classes=2, show_label=False)
 
         # Bottom Gallery
-        if sample_paths:
-            with gr.Column(elem_classes="gallery-container"):
-                gr.Markdown("### 📸 Quick Test Gallery (Click an X-Ray)")
+        with gr.Column(elem_classes="gallery-container"):
+            gr.Markdown("### Selected Patient Examples")
+            if sample_paths:
                 gr.Examples(
                     examples=sample_paths, 
                     inputs=image_input, 
                     examples_per_page=10, 
                     label=""
                 )
-        else:
-            with gr.Column(elem_classes="gallery-container"):
-                gr.Markdown("### 📸 Quick Test Gallery\n<span style='color:#94a3b8'>*Upload images to the `samples/` folder to populate this film strip.*</span>")
+            else:
+                gr.Markdown("<span style='color:#64748b; font-size: 14px;'>No reference examples found in the designated samples directory.</span>")
 
         # Events
         predict_btn.click(fn=classify_xray, inputs=[image_input, model_dropdown], outputs=[label_output, verdict_output])
