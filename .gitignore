@@ -1,0 +1,35 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Model weights (large files — download separately or use Git LFS)
+Models/*.keras
+Models/*.h5
+Models/*.pth
+
+# Runtime logs
+logs/predictions.log
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Distribution
+*.egg-info/
+dist/
+build/
