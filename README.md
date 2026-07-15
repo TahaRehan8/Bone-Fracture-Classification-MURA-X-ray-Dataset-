@@ -60,7 +60,7 @@ MURA-v1.1/                          mura_flat/
 1. **Flattening:** Extracted all images from the nested patient/study structure into flat `fractured/` and `not_fractured/` directories, using the `positive`/`negative` folder naming convention to assign labels.
 2. **Patient-Level Splitting:** The validation set was further split into `val` and `test` splits **at the patient level** (not image level) to prevent data leakage.
 3. **Leakage Verification:** Explicit patient ID extraction and cross-set intersection checks confirm **zero patient overlap** between train, val, and test.
-4. **Image Cleaning:** All images are re-saved as clean JPEG files via PIL to handle any corrupted or non-standard files that would crash TensorFlow's decoder.
+4. **Image Resizing & Cleaning:** All images were resized from their native high-resolution formats down to **224×224 pixels** (standard ImageNet input size) to drastically reduce memory overhead during training while preserving fracture visibility. Images were also converted to clean JPEGs via PIL to handle any corrupted decodings.
 
 ### Class Imbalance
 
@@ -257,6 +257,14 @@ docker run -p 8000:8000 fracture-classifier
 ```bash
 pytest test_api.py -v
 ```
+
+### 6. Deployment on Render (PaaS)
+
+This project is architected specifically for lightweight cloud deployment on platforms like Render:
+1. Connect your GitHub repository to Render as a **Web Service**.
+2. Render will automatically detect the `Dockerfile`.
+3. The `COPY samples/ samples/` and `COPY static/ static/` commands in the Dockerfile ensure that both the UI and the test images are securely baked into the cloud container.
+4. Because we replaced Gradio with a native HTML/JS frontend, the RAM usage easily fits within Render's 512MB free tier limits!
 
 ---
 
