@@ -37,7 +37,8 @@ def create_ui(models_dict: dict) -> gr.Blocks:
 
     SAMPLES_DIR = Path(__file__).resolve().parent.parent / "samples"
     sample_images = sorted(SAMPLES_DIR.glob("*.png")) + sorted(SAMPLES_DIR.glob("*.jpg")) + sorted(SAMPLES_DIR.glob("*.jpeg"))
-    sample_paths = [str(p) for p in sample_images[:10]]
+    # Gradio 4.x requires a list of lists for examples!
+    sample_paths = [[str(p)] for p in sample_images[:10]]
 
     CUSTOM_CSS = """
     body { background-color: #f4f7f6 !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; }
