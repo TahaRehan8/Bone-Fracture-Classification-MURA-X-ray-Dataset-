@@ -65,12 +65,27 @@ MURA-v1.1/                          mura_flat/
 3. **Leakage Verification:** Explicit patient ID extraction and cross-set intersection checks confirm **zero patient overlap** between train, val, and test.
 4. **Image Resizing & Cleaning:** All images were resized from their native high-resolution formats down to **224×224 pixels** (standard ImageNet input size) to drastically reduce memory overhead during training while preserving fracture visibility. Images were also converted to clean JPEGs via PIL to handle any corrupted decodings.
 
-### Class Imbalance
+## Dataset Splits & Class Distribution
+
+**Final Split Counts**
+
+| Split | Images |
+|-------|--------|
+| Train | 8,000 |
+| Validation | 1,000 |
+| Test | 1,500 |
+| **Total** | **10,500** |
+
+**Class Imbalance (Training Set)**
 
 | Class | Count | Weight |
 |-------|-------|--------|
-| `fractured` | ~1,567 | **1.28** (upweighted) |
-| `not_fractured` | ~2,436 | **0.82** (downweighted) |
+| `fractured` | ~3,200 | **1.25** (upweighted) |
+| `not_fractured` | ~4,800 | **0.83** (downweighted) |
+
+**Notes:**
+- Validation and test sets were split at the **patient level** (not image level) to prevent data leakage between training and evaluation phases.
+- Class weights were computed using the balanced weighting formula: `weight = total_samples / (num_classes × class_count)`, based on the training set's 40/60 (`fractured` / `not_fractured`) imbalance. Weights are applied only during training (via the weighted loss function); validation and test sets are evaluated without reweighting.
 
 The dataset has a **40/60 class imbalance**. We handle this via **weighted loss** (`class_weight` parameter in `model.fit()`), which penalizes misclassifications on the minority class (`fractured`) more heavily. This is critical in a medical context — a missed fracture (false negative) is far more dangerous than a false alarm.
 
