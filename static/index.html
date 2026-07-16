@@ -205,10 +205,7 @@
         }
 
         .gallery-container {
-            margin-top: 30px;
-            padding: 20px;
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
+            margin-top: 20px;
         }
 
         .gallery-container h3 {
@@ -280,6 +277,14 @@
                     Awaiting Radiograph...
                 </div>
 
+                <!-- Gallery Panel -->
+                <div class="gallery-container">
+                    <h3>Selected Patient Examples</h3>
+                    <div class="gallery-grid" id="gallery-grid">
+                        <!-- Javascript will populate this -->
+                    </div>
+                </div>
+
                 <div class="bars-container" id="confidence-bars" style="display: none;">
                     <div style="font-size:13px; font-weight:600; margin-bottom:15px; margin-top:20px;">Model Confidence Distribution</div>
                     
@@ -303,14 +308,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Gallery Panel -->
-        <div class="gallery-container">
-            <h3>Selected Patient Examples</h3>
-            <div class="gallery-grid" id="gallery-grid">
-                <!-- Javascript will populate this -->
             </div>
         </div>
     </div>
