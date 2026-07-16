@@ -4,6 +4,9 @@
 
 A modular, production-ready bone fracture classification system built with **TensorFlow/Keras** and **FastAPI**. Compares a **Baseline CNN** against a **fine-tuned MobileNetV3-Small** on the [MURA (Musculoskeletal Radiographs)](https://stanfordmlgroup.github.io/competitions/mura/) dataset.
 
+> **🚀 Live Application:** [https://bone-fracture-classification-mura-x-ray.onrender.com/](https://bone-fracture-classification-mura-x-ray.onrender.com/)
+> *Note: This dashboard is hosted on a free cloud tier. If it hasn't been used recently, it may take 60-90 seconds for the server to wake up from a "cold start" before the UI loads. Please be patient!*
+
 ---
 
 ## Project Structure
