@@ -37,7 +37,7 @@ A modular, production-ready bone fracture classification system built with **Ten
 
 ### MURA-v1.1
 
-The **MURA (Musculoskeletal Radiographs)** dataset is one of the largest public radiograph datasets, containing **40,561** images across 7 upper-extremity types (elbow, finger, forearm, hand, humerus, shoulder, wrist).
+The **MURA (Musculoskeletal Radiographs)** dataset is one of the largest public radiograph datasets, containing **40,561** images across 7 upper-extremity types. *Note: For this prototype, to accommodate hardware constraints and rapid iteration, a representative subset of the dataset was utilized for training and evaluation.*
 
 ### Data Pipeline
 
@@ -265,6 +265,8 @@ This project is architected specifically for lightweight cloud deployment on pla
 2. Render will automatically detect the `Dockerfile`.
 3. The `COPY samples/ samples/` and `COPY static/ static/` commands in the Dockerfile ensure that both the UI and the test images are securely baked into the cloud container.
 4. Because we replaced Gradio with a native HTML/JS frontend, the RAM usage easily fits within Render's 512MB free tier limits!
+
+**A Note on "Cold Starts"**: Because this prototype runs on Render's free tier, the server spins down after periods of inactivity. If you access the URL from a "dead start", it may take up to 60-90 seconds for the application to boot up and load the ML models into memory before the UI responds. This is normal behavior for free PaaS tiers.
 
 ---
 
